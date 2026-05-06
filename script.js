@@ -12,6 +12,10 @@ const stepDots = Array.from(document.querySelectorAll(".step-dots span"));
 let currentStep = 0;
 
 window.dataLayer = window.dataLayer || [];
+const leadsEndpoint = form?.dataset.leadsEndpoint || "";
+const isConfiguredEndpoint =
+  leadsEndpoint &&
+  leadsEndpoint !== "PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
 function trackEvent(event, payload = {}) {
   window.dataLayer.push({
@@ -20,6 +24,48 @@ function trackEvent(event, payload = {}) {
     brand: "Maison Aurelia",
     ...payload,
   });
+
+  if (typeof window.gtag === "function") {
+    window.gtag("event", event, {
+      page_type: "luxury_wedding_landing",
+      brand: "Maison Aurelia",
+      ...payload,
+    });
+  }
+}
+
+function buildLeadPayload(data) {
+  return {
+    submitted_at: new Date().toISOString(),
+    brand: "Maison Aurelia",
+    source: "landing_page",
+    page_url: window.location.href,
+    referrer: document.referrer || "",
+    user_agent: navigator.userAgent,
+    periodo: data.periodo || "",
+    data: data.data || "",
+    budget: data.budget || "",
+    invitati: data.invitati || "",
+    location: data.location || "",
+    zona: data.zona || "",
+    nome: data.nome || "",
+    contatto: data.contatto || "",
+    messaggio: data.messaggio || "",
+  };
+}
+
+function buildLeadSummary(data) {
+  return [
+    `Periodo: ${data.periodo || "-"}`,
+    `Data: ${data.data || "-"}`,
+    `Budget: ${data.budget || "-"}`,
+    `Invitati: ${data.invitati || "-"}`,
+    `Location: ${data.location || "-"}`,
+    `Zona: ${data.zona || "-"}`,
+    `Nome: ${data.nome || "-"}`,
+    `Contatto: ${data.contatto || "-"}`,
+    `Messaggio: ${data.messaggio || "-"}`,
+  ].join("\n");
 }
 
 function updateWizard() {
@@ -70,22 +116,13 @@ prevBtn.addEventListener("click", () => {
   updateWizard();
 });
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!validateCurrentStep()) return;
 
   const data = Object.fromEntries(new FormData(form).entries());
-  const summary = [
-    `Periodo: ${data.periodo || "-"}`,
-    `Data: ${data.data || "-"}`,
-    `Budget: ${data.budget || "-"}`,
-    `Invitati: ${data.invitati || "-"}`,
-    `Location: ${data.location || "-"}`,
-    `Zona: ${data.zona || "-"}`,
-    `Nome: ${data.nome || "-"}`,
-    `Contatto: ${data.contatto || "-"}`,
-    `Messaggio: ${data.messaggio || "-"}`,
-  ].join("\n");
+  const payload = buildLeadPayload(data);
+  const summary = buildLeadSummary(data);
 
   trackEvent("generate_lead", {
     form_name: "Wedding availability request",
@@ -96,11 +133,36 @@ form.addEventListener("submit", (event) => {
     destination_area: data.zona || "",
   });
 
+  submitBtn.disabled = true;
+  formStatus.textContent = "Perfetto, sto registrando la richiesta.";
+
+  if (isConfiguredEndpoint) {
+    try {
+      await fetch(leadsEndpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        },
+        body: JSON.stringify(payload),
+      });
+      window.location.href = "thank-you.html";
+      return;
+    } catch (error) {
+      trackEvent("lead_sheet_submit_error", {
+        form_name: "Wedding availability request",
+        error_message: error.message || "Unknown error",
+      });
+      submitBtn.disabled = false;
+      formStatus.textContent =
+        "Non sono riuscita a salvare la richiesta nel foglio. Apro l'email come backup.";
+    }
+  }
+
   window.location.href = `mailto:info@example.com?subject=Richiesta Maison Aurelia&body=${encodeURIComponent(summary)}`;
   window.setTimeout(() => {
     window.location.href = "thank-you.html";
   }, 900);
-  formStatus.textContent = "Perfetto, sto aprendo la tua email con il riepilogo della richiesta.";
 });
 
 document.querySelectorAll('a[href="#richiesta"]').forEach((link) => {

@@ -1,15 +1,28 @@
 <!doctype html>
 <html lang="it">
   <head>
-    <!-- Google Tag Manager: replace GTM-XXXXXXX with your real container ID. -->
+    <!-- Tracking setup: replace the placeholder IDs with your real GTM and GA4 IDs. -->
     <script>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      window.MA_TRACKING = {
+        gtmId: "GTM-XXXXXXX",
+        ga4Id: "G-XXXXXXXXXX"
+      };
+
+      (function(w,d,s,l,i){
+      if (!i || i === "GTM-XXXXXXX") return;
+      w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-XXXXXXX');
+      })(window,document,'script','dataLayer',window.MA_TRACKING.gtmId);
+
+      (function(w,d,i){
+      if (!i || i === "G-XXXXXXXXXX") return;
+      var s=d.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+i;
+      d.head.appendChild(s);w.dataLayer=w.dataLayer||[];w.gtag=function(){w.dataLayer.push(arguments);};
+      w.gtag('js', new Date());w.gtag('config', i);
+      })(window,document,window.MA_TRACKING.ga4Id);
     </script>
-    <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Richiesta Ricevuta | Maison Aurelia</title>
@@ -24,17 +37,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <!-- Google Tag Manager (noscript): replace GTM-XXXXXXX with your real container ID. -->
-    <noscript>
-      <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-      ></iframe>
-    </noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
     <main class="thank-you-page">
       <section class="thank-you-panel">
         <p class="eyebrow">Richiesta inviata</p>
