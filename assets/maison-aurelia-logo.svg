@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Maison Aurelia logo</title>
+  <rect width="512" height="512" fill="#211d1a"/>
+  <rect x="28" y="28" width="456" height="456" fill="none" stroke="#c9a66b" stroke-width="10"/>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#f3dfb5" stroke-width="2" opacity="0.55"/>
+  <text
+    x="256"
+    y="282"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    fill="#f3dfb5"
+    font-family="Cormorant Garamond, Georgia, serif"
+    font-size="142"
+    font-weight="600"
+    letter-spacing="10"
+  >MA</text>
+  <path d="M158 352h196" stroke="#c9a66b" stroke-width="5" stroke-linecap="round"/>
+</svg>

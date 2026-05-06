@@ -70,6 +70,18 @@ a {
   font-weight: 700;
 }
 
+.brand-with-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-with-mark img {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+}
+
 nav {
   display: flex;
   gap: 28px;
