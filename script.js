@@ -11,6 +11,17 @@ const stepDots = Array.from(document.querySelectorAll(".step-dots span"));
 
 let currentStep = 0;
 
+window.dataLayer = window.dataLayer || [];
+
+function trackEvent(event, payload = {}) {
+  window.dataLayer.push({
+    event,
+    page_type: "luxury_wedding_landing",
+    brand: "Maison Aurelia",
+    ...payload,
+  });
+}
+
 function updateWizard() {
   steps.forEach((step, index) => {
     step.classList.toggle("active", index === currentStep);
@@ -24,6 +35,11 @@ function updateWizard() {
   nextBtn.classList.toggle("hidden", currentStep === steps.length - 1);
   submitBtn.classList.toggle("hidden", currentStep !== steps.length - 1);
   formStatus.textContent = "";
+
+  trackEvent("lead_form_step_view", {
+    step_number: currentStep + 1,
+    step_name: stepDots[currentStep]?.textContent || `Step ${currentStep + 1}`,
+  });
 }
 
 function validateCurrentStep() {
@@ -41,6 +57,10 @@ function validateCurrentStep() {
 
 nextBtn.addEventListener("click", () => {
   if (!validateCurrentStep()) return;
+  trackEvent("lead_form_step_complete", {
+    step_number: currentStep + 1,
+    step_name: stepDots[currentStep]?.textContent || `Step ${currentStep + 1}`,
+  });
   currentStep = Math.min(currentStep + 1, steps.length - 1);
   updateWizard();
 });
@@ -67,8 +87,26 @@ form.addEventListener("submit", (event) => {
     `Messaggio: ${data.messaggio || "-"}`,
   ].join("\n");
 
+  trackEvent("generate_lead", {
+    form_name: "Wedding availability request",
+    wedding_period: data.periodo || "",
+    budget_range: data.budget || "",
+    guest_count: data.invitati || "",
+    location_status: data.location || "",
+    destination_area: data.zona || "",
+  });
+
   window.location.href = `mailto:info@example.com?subject=Richiesta Maison Aurelia&body=${encodeURIComponent(summary)}`;
   formStatus.textContent = "Perfetto, sto aprendo la tua email con il riepilogo della richiesta.";
+});
+
+document.querySelectorAll('a[href="#richiesta"]').forEach((link) => {
+  link.addEventListener("click", () => {
+    trackEvent("lead_cta_click", {
+      cta_text: link.textContent.trim(),
+      cta_destination: "#richiesta",
+    });
+  });
 });
 
 function animateCounter(element) {
