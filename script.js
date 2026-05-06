@@ -97,6 +97,9 @@ form.addEventListener("submit", (event) => {
   });
 
   window.location.href = `mailto:info@example.com?subject=Richiesta Maison Aurelia&body=${encodeURIComponent(summary)}`;
+  window.setTimeout(() => {
+    window.location.href = "thank-you.html";
+  }, 900);
   formStatus.textContent = "Perfetto, sto aprendo la tua email con il riepilogo della richiesta.";
 });
 
